@@ -3,22 +3,28 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const encuestaConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'Septiembre13#',
-  database: process.env.DB_NAME || 'EncuestaDB',
-  port: parseInt(process.env.DB_PORT || '5432'),
-};
+// Usamos la URL completa que configuramos en Render
+const connectionString = process.env.DATABASE_URL;
 
-export const pool = new Pool(encuestaConfig);
+if (!connectionString) {
+  console.error('❌ ERROR CRÍTICO: No se encontró la variable de entorno DATABASE_URL');
+  process.exit(1); // Detiene el servidor si falta la URL
+}
+
+export const pool = new Pool({
+  connectionString: connectionString,
+  ssl: {
+    rejectUnauthorized: false // OBLIGATORIO para conexiones a Neon desde Render
+  }
+});
 
 export const testConnection = async () => {
   try {
     const client = await pool.connect();
-    console.log('✅ Conectado a PostgreSQL - Base de datos: EncuestaDB');
+    console.log('✅ Conectado exitosamente a Neon (PostgreSQL)');
     client.release();
   } catch (error) {
-    console.error('❌ Error de conexión:', error);
+    console.error('❌ Error de conexión a la base de datos:', error);
+    throw error;
   }
 };

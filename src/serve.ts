@@ -17,10 +17,3 @@ async function startServer() {
 }
 
 startServer();
-
-git init
-git add .
-git commit -m "Backend inicial"
-git branch -M main
-git remote add origin https://github.com/edward-rabelly/backend.git
-git push -u origin main

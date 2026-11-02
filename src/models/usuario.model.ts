@@ -17,7 +17,6 @@ export class UsuarioModel {
   
   /**
    * Obtiene la lista completa de usuarios.
-   * @returns Promesa con un arreglo de todos los usuarios.
    */
   static async obtenerTodos(): Promise<Usuario[]> {
     const result = await pool.query('SELECT * FROM usuarios ORDER BY id_usuario ASC');
@@ -26,8 +25,6 @@ export class UsuarioModel {
 
   /**
    * Busca un usuario específico por su ID.
-   * @param id - El identificador único del usuario a buscar.
-   * @returns El objeto Usuario si se encuentra, o null si no existe.
    */
   static async obtenerPorId(id: number): Promise<Usuario | null> {
     const result = await pool.query('SELECT * FROM usuarios WHERE id_usuario = $1', [id]);
@@ -35,9 +32,16 @@ export class UsuarioModel {
   }
 
   /**
+   * Busca un usuario específico por su Email (NUEVO PARA EL LOGIN).
+   */
+  static async obtenerPorEmail(email: string): Promise<Usuario | null> {
+    const query = 'SELECT * FROM usuarios WHERE email = $1';
+    const result = await pool.query(query, [email]);
+    return result.rows[0] || null;
+  }
+
+  /**
    * Crea un nuevo usuario y lo guarda en la base de datos PostgreSQL.
-   * @param usuario - Los datos del usuario enviados desde el frontend.
-   * @returns El objeto Usuario completo ya guardado con su nuevo ID.
    */
   static async crear(usuario: Usuario): Promise<Usuario> {
     const query = `
@@ -57,18 +61,13 @@ export class UsuarioModel {
     ];
 
     const result = await pool.query(query, values);
-    return result.rows[0]; // RETURNING * nos devuelve el usuario ya creado con su id_usuario
+    return result.rows[0];
   }
 
   /**
    * Actualiza los datos de un usuario existente.
-   * @param id - El ID del usuario a actualizar.
-   * @param usuario - Los nuevos datos a mezclar con los existentes.
-   * @returns El usuario actualizado o null si no se encontró el ID.
    */
   static async actualizar(id: number, usuario: Partial<Usuario>): Promise<Usuario | null> {
-    // Nota: Usamos los valores del usuario o dejamos los que ya tenía si no se envían (manejo básico)
-    // Para una actualización completa (PUT), se esperan todos los campos.
     const query = `
       UPDATE usuarios 
       SET nombre = $1, tipo_documento = $2, numero_documento = $3, email = $4, edad = $5, genero = $6, contrasena = $7
@@ -93,14 +92,15 @@ export class UsuarioModel {
 
   /**
    * Elimina un usuario de la base de datos por su ID.
-   * @param id - El ID del usuario a eliminar.
-   * @returns true si se eliminó correctamente, false si no se encontró.
    */
   static async eliminar(id: number): Promise<boolean> {
     const result = await pool.query('DELETE FROM usuarios WHERE id_usuario = $1', [id]);
-    // rowCount nos dice cuántas filas se eliminaron. Si es > 0, fue exitoso.
     return result.rowCount !== null && result.rowCount > 0;
   }
+
+  /**
+   * Obtiene el historial de encuestas de un usuario.
+   */
   static async obtenerHistorial(id_usuario: number): Promise<any[]> {
     const query = `
       SELECT 
@@ -123,8 +123,7 @@ export class UsuarioModel {
     const result = await pool.query(query, [id_usuario]);
     return result.rows;
   }
-}
-
+} 
 
 
 

@@ -5,7 +5,8 @@ import {
   crearUsuario, 
   actualizarUsuario, 
   eliminarUsuario,
-  obtenerHistorialUsuario
+  obtenerHistorialUsuario,
+  loginUsuario
 } from '../controllers/usuario.controllers';
 
 const router = Router();
@@ -16,6 +17,7 @@ router.get('/:id/historial', obtenerHistorialUsuario);
 router.post('/', crearUsuario);
 router.put('/:id', actualizarUsuario);
 router.delete('/:id', eliminarUsuario);
+router.post('/login', loginUsuario);
 
 export default router;
 

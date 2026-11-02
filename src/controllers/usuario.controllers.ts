@@ -97,4 +97,35 @@ export const obtenerHistorialUsuario = async (req: Request, res: Response, next:
   }
 };
 
+
+export const loginUsuario = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, contrasena } = req.body;
+
+    // 1. Buscar el usuario por email
+    const usuario = await UsuarioModel.obtenerPorEmail(email);
+    
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // 2. Comparar la contraseña con bcrypt
+    const esCorrecta = await bcrypt.compare(contrasena, usuario.contrasena);
+
+    if (!esCorrecta) {
+      return res.status(401).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // 3. Devolver los datos del usuario (sin la contraseña)
+    const { contrasena: _, ...usuarioSinPassword } = usuario;
+    
+    res.status(200).json({
+      message: 'Login exitoso',
+      usuario: usuarioSinPassword
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
 // tener algo conceptual a algo de codigo. No las ejecuta pero si las gestiona

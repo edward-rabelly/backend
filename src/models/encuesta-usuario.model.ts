@@ -21,6 +21,12 @@ export class EncuestaUsuarioModel {
   }
 
   // Extra: obtener respuestas de un usuario en una encuesta
+  static async obtenerPorUsuario(id_usuario: string | number): Promise<EncuestaUsuario[]> {
+    const query = 'SELECT * FROM encuesta_usuario WHERE id_usuario = $1 ORDER BY id_respuesta DESC';
+    const result = await pool.query(query, [id_usuario]);
+    return result.rows;
+  }
+  
   static async obtenerPorUsuarioYEncuesta(idUsuario: number, idEncuesta: number): Promise<EncuestaUsuario[]> {
     const result = await pool.query(
       'SELECT * FROM encuesta_usuario WHERE id_usuario = $1 AND id_encuesta = $2', 
@@ -28,7 +34,7 @@ export class EncuestaUsuarioModel {
     );
     return result.rows;
   }
-
+  
   static async crear(registro: EncuestaUsuario): Promise<EncuestaUsuario> {
     const query = `
       INSERT INTO encuesta_usuario (id_usuario, id_encuesta, id_pregunta, respuesta, fecha)
@@ -57,10 +63,4 @@ export class EncuestaUsuarioModel {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
-  static async obtenerPorUsuario(id_usuario: string | number) {
-  const query = 'SELECT * FROM respuestas WHERE id_usuario = $1 ORDER BY fecha_respuesta DESC';
-  // Si usas MySQL, sería: 'SELECT * FROM respuestas WHERE id_usuario = ? ORDER BY fecha_respuesta DESC'
-  const result = await pool.query(query, [id_usuario]);
-  return result.rows; // o result, dependiendo de si usas pg o mysql2
-  }
 }

@@ -6,7 +6,7 @@ import usuarioRouter from './router/usuario.router';
 import encuestaRouter from './router/encuesta.router';
 import preguntaRouter from './router/pregunta.router';
 import encuestaUsuarioRouter from './router/encuesta-usuario.router';
-// import encuestaRouter from './router/encuesta.router'; // (Lo descomentaremos después)
+
 
 const app = express();
 

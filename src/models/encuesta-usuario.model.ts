@@ -56,4 +56,11 @@ export class EncuestaUsuarioModel {
     const result = await pool.query('DELETE FROM encuesta_usuario WHERE id_respuesta = $1', [id]);
     return result.rowCount !== null && result.rowCount > 0;
   }
+
+  static async obtenerPorUsuario(id_usuario: string | number) {
+  const query = 'SELECT * FROM respuestas WHERE id_usuario = $1 ORDER BY fecha_respuesta DESC';
+  // Si usas MySQL, sería: 'SELECT * FROM respuestas WHERE id_usuario = ? ORDER BY fecha_respuesta DESC'
+  const result = await pool.query(query, [id_usuario]);
+  return result.rows; // o result, dependiendo de si usas pg o mysql2
+  }
 }

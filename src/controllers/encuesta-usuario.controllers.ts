@@ -69,6 +69,20 @@ export const eliminarRespuesta = async (req: Request, res: Response, next: NextF
     next(error);
   }
 };
+
+export const obtenerRespuestasPorUsuario = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Truco para evitar errores de TypeScript en Express
+    const id_usuario = String((req.params as any).id_usuario || (req.params as any).id);
+    
+    // Asegúrate de que tu Modelo tenga este método
+    const respuestas = await EncuestaUsuarioModel.obtenerPorUsuario(id_usuario);
+    res.status(200).json(respuestas);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Los controllers son los que hablan con la base de datos (con archivos, con otras APIs, con el sistema de archivos, etc.). Puden tardar tiempo en recorrer
 // todas las funciones o operaciones por eso se usa async que le dice al archivo o quien le pida esta funcion que puede seguir en otra 
 //mientras soluciona esta

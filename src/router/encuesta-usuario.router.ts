@@ -5,17 +5,24 @@ import {
   obtenerRespuestasPorUsuarioYEncuesta,
   crearRespuesta, 
   actualizarRespuesta, 
-  eliminarRespuesta 
+  eliminarRespuesta, 
+  obtenerRespuestasPorUsuario // 👈 Importado correctamente
 } from '../controllers/encuesta-usuario.controllers';
 
 const router = Router();
 
+// 1. RUTA NUEVA: Debe ir ANTES de las rutas genéricas con :id
+router.get('/usuario/:id_usuario', obtenerRespuestasPorUsuario);
+
+// 2. RUTAS EXISTENTES
 router.get('/', obtenerRespuestas);
 router.get('/:id', obtenerRespuestaPorId);
 router.get('/usuario/:idUsuario/encuesta/:idEncuesta', obtenerRespuestasPorUsuarioYEncuesta);
 router.post('/', crearRespuesta);
 router.put('/:id', actualizarRespuesta);
 router.delete('/:id', eliminarRespuesta);
+
+
 
 export default router;
 
